@@ -68,7 +68,8 @@ class Game extends React.Component {
     this.setState({
       history: history.concat([
         {
-          squares: squares
+          squares: squares,
+          lastClickedSquare: i
         }
       ]),
       stepNumber: history.length,
@@ -89,12 +90,27 @@ class Game extends React.Component {
     const winner = calculateWinner(current.squares);
 
     const moves = history.map((step, move) => {
+      const colRow = getColRow(step.lastClickedSquare);
+
       const desc = move ? "Go to move #" + move : "Go to game start";
-      return (
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
-        </li>
-      );
+      if (!colRow) {
+        return (
+          <li key={move}>
+            <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          </li>
+        );
+      } else {
+        const col = colRow[0];
+        const row = colRow[1];
+
+        return (
+          <li key={move}>
+            <button onClick={() => this.jumpTo(move)}>
+              {desc} @ column: {col}, row: {row}
+            </button>
+          </li>
+        );
+      }
     });
 
     let status;
@@ -115,6 +131,31 @@ class Game extends React.Component {
         </div>
       </div>
     );
+  }
+}
+
+function getColRow(clickedSquare) {
+  switch (clickedSquare) {
+    case 0:
+      return ["1", "1"];
+    case 1:
+      return ["2", "1"];
+    case 2:
+      return ["3", "1"];
+    case 3:
+      return ["1", "2"];
+    case 4:
+      return ["2", "2"];
+    case 5:
+      return ["3", "2"];
+    case 6:
+      return ["1", "3"];
+    case 7:
+      return ["2", "3"];
+    case 8:
+      return ["3", "3"];
+    default:
+      return null;
   }
 }
 
